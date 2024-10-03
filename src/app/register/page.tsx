@@ -50,6 +50,7 @@ export default function Register () {
     }    
 
 
+
     return (
         <>
             <form onSubmit={RegisterFormHandler} style={{border: "2px solid black", width: "50%", textAlign: "center", padding: "20px", margin: "0 auto"}}>

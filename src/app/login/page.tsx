@@ -46,35 +46,32 @@ export default function LogIn() {
     };
 
     return (
-        <div className="bg-gradient-to-b from-gray-600 to-black justify-center items-center h-screen w-screen flex flex-col relative">
-            <h2 className="text-4xl font-medium text-white mb-10">Muzamil Baig</h2>
-            <div className="p-5 border border-gray-300 rounded">
+        <div className="w-[30%] text-center absolute rounded top-2/4 left-2/4 transform translate-x-[-50%] translate-y-[-50%] d shadow-stone-700 shadow-2xl">
+            <div className="p-5 rounded bg-gradient-to-b from-gray-600 to-black">
 
+            <h2 className="text-4xl font-medium text-white mb-10 underline">Login</h2>
                 {/* form start */}
-                <form onSubmit={formHandler} className="m-auto w-[50%] border p-10 bg-slate-800 text-blue-300">
-
-                    <label className="ml- relative top-4">
-                        Email: <input type="email"
+                <form onSubmit={formHandler} className="text-center">
+                        <div>
+                         <input type="email"
                             placeholder="Email"
                             value={email}
                             onChange={(e) => { setEmail(e.target.value) }}
-                            className="border"
+                            className="p-2 rounded m-2 w-60"
                         />
-                    </label>
-
-                    <label className=" relative top-4">
-                        Password: <input type="password"
+                        </div>
+                        <div>
+                            <input type="password"
                             placeholder="Password"
                             value={pass}
                             onChange={(e) => { setPass(e.target.value) }}
-                            className="border"
+                            className="p-2 rounded m-2 w-60"
                         />
-                    </label>
-
-                    <button type="submit" className="border-red-50 border-2 p-2 mt-10">login</button>
+                        </div>
+                    
+                    <button type="submit" className="border-red-50 border-2 pt-2 pb-2 pl-4 pr-4 mt-6 mb-6 text-white hover:bg-cyan-600 rounded">Login</button>
                     {err && <p className="text-red-700">{err}</p>}
                 </form>
-                {/* form end */}
 
                 <p className="text-sm font-medium text-gray-300 space-y-6 px-6 pb-4">
                     Don't Have An account?{" "}

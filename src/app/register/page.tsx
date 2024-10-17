@@ -6,6 +6,17 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react"
 import style from "./register.module.css"
 
+type RegisterType = {
+    firstName: string
+    lastName: string
+    email: string
+    password: string
+    confirmPass: string
+    gender: string
+    err: string
+    succReg: string
+}
+
 
 export default function Register () {
     const [firstName, setFirstName] = useState("");

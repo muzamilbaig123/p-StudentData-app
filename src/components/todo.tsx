@@ -1,19 +1,18 @@
 "use client";
 
-import {fireStore}  from "@/firebase/firebaseconfig";
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, serverTimestamp, updateDoc } from "firebase/firestore";
+import { fireStore } from "@/firebase/firebaseconfig";
+import { addDoc, collection, deleteDoc, doc, getDocs, orderBy, query, serverTimestamp, updateDoc } from "firebase/firestore";
 import Image from "next/image";
-import { todo } from "node:test";
 import { FormEvent, useEffect, useState } from "react";
 
 type AddTodoFirebaseType = {
-    id? : string,
-    title: string,
-    details: string,
-    dueDate: string,
+    id: string;
+    title: string;
+    details: string;
+    dueDate: string;
 };
 
-async function addTodoFirebase ({title, details, dueDate}: AddTodoFirebaseType) {
+async function addTodoFirebase({ title, details, dueDate }: Omit<AddTodoFirebaseType, "id">) {
     try {
         const coll = collection(fireStore, "Todos");
         const docRef = await addDoc(coll, {
@@ -31,20 +30,25 @@ async function addTodoFirebase ({title, details, dueDate}: AddTodoFirebaseType) 
 }
 
 // fetch data in firestore database
-
 async function fetchTodosFirebase() {
     const todoColl = collection(fireStore, "Todos");
     const querSnanShot = await getDocs(query(todoColl, orderBy("createdAt", "desc")));
     const todosArr: AddTodoFirebaseType[] = [];
     querSnanShot.forEach((doc) => {
-        const todoData = doc.data() as AddTodoFirebaseType;
-        todosArr.push({ id: doc.id, ...todoData });
+        console.log("Muzamil Docs.");
+        const todoData = doc.data();
+        todosArr.push({
+            id: doc.id,
+            title: todoData.title || "",
+            details: todoData.details || "",
+            dueDate: todoData.dueDate || ""
+        });
+        
     });
     return todosArr;
 }
 
 // delete todos
-
 async function deleteTodos(todoId: string) {
     try {
         console.log("Attempting to delete todo with id => ", todoId);
@@ -113,15 +117,14 @@ export default function TodoApp() {
     useEffect(() => {
         async function fetchingTodos() {
             const todos = await fetchTodosFirebase();
-            setTodos(todos)
+            setTodos(todos);
         }
         fetchingTodos();
     }, []);
 
-    // function to handle " update button click ";
-
-    const handleupdateClick = (todo:AddTodoFirebaseType) => {
-        // set the selected todo's value to the form field 
+    // function to handle "update button click";
+    const handleupdateClick = (todo: AddTodoFirebaseType) => {
+        // set the selected todo's value to the form field
         setTitle(todo.title || "");
         setDetails(todo.details || "");
         setDueDate(todo.dueDate || "");
@@ -130,48 +133,39 @@ export default function TodoApp() {
         setIsUpdateMode(true);
     };
 
-    // fetch todo from firestore on componenet mount
-    useEffect(() => {
-        async function fetchTodos() {
-            const todos = await fetchTodosFirebase();
-            setTodos(todos);
-        };
-        fetchTodos();
-    }, [])
-
-   
-
     return (
         <>
             <main className="flex flex-1 items-center justify-center flex-col md:flex-row min-h-screen">
-            {/* left section */}
-                <section className="flex flex-1 md:flex-col items-center md:justify-start mx-auto  ">
+                {/* left section */}
+                <section className="flex flex-1 md:flex-col items-center md:justify-start mx-auto">
                     {/* logo */}
                     <div className="absolute top-4 left-4">
-                    <Image 
-                    src="/images/logo.jpg"
-                    alt="muzamil logo"
-                    width={40}
-                    height={100}
-                    style={{borderRadius: "46px"}}
-                    />
+                        <Image
+                            src="/images/logo.jpg"
+                            alt="muzamil logo"
+                            width={40}
+                            height={100}
+                            style={{ borderRadius: "46px" }}
+                        />
                     </div>
                     {/* Todo Form */}
                     <div className="p-6 md:p-12 mt-10 rounded-lg shadow-xl w-full max-w-lg bg-white">
-                        <h2 className="text-center text-2xl font-bold leading-9 text-gray-900"></h2>
-                        {isUpdateMode ? "Update Your Todo " :  " Create A Todo"}
+                        <h2 className="text-center text-2xl font-bold leading-9 text-gray-900">
+                            {isUpdateMode ? "Update Your Todo " : "Create A Todo"}
+                        </h2>
                         <form className="mt-6 space-y-6" onSubmit={handleSubmit}>
                             <div>
                                 <label htmlFor="title" className="block text-sm font-medium leading-6 text-gray-600">Title</label>
                                 <div className="mt-2">
-                                    <input type="text"
-                                    id="title"
-                                    name="title"
-                                    autoComplete="off"
-                                    required
-                                    value={title}
-                                    onChange={((e) => {setTitle(e.target.value)})}
-                                    className="w-full rounded border py-2 pl-2 text-gray-900 shadow ring"
+                                    <input
+                                        type="text"
+                                        id="title"
+                                        name="title"
+                                        autoComplete="off"
+                                        required
+                                        value={title}
+                                        onChange={(e) => { setTitle(e.target.value); }}
+                                        className="w-full rounded border py-2 pl-2 text-gray-900 shadow ring"
                                     />
                                 </div>
                             </div>
@@ -179,32 +173,31 @@ export default function TodoApp() {
                             <div>
                                 <label htmlFor="details" className="block text-sm font-medium leading-6 text-gray-600">Details</label>
                                 <div className="mt-2">
-                                    <textarea 
-                                    id="details"
-                                    name="details"
-                                    rows={4}
-                                    autoComplete="off"
-                                    required
-                                    value={details}
-                                    onChange={((e) => {setDetails(e.target.value)})}
-                                    className="w-full rounded border py-2 pl-2 text-gray-900 shadow ring"
+                                    <textarea
+                                        id="details"
+                                        name="details"
+                                        rows={4}
+                                        autoComplete="off"
+                                        required
+                                        value={details}
+                                        onChange={(e) => { setDetails(e.target.value); }}
+                                        className="w-full rounded border py-2 pl-2 text-gray-900 shadow ring"
                                     ></textarea>
-
                                 </div>
                             </div>
 
-
                             <div>
-                                <label htmlFor="dueDate" className="block text-sm font-medium leading-6 text-gray-600">dueDate</label>
+                                <label htmlFor="dueDate" className="block text-sm font-medium leading-6 text-gray-600">Due Date</label>
                                 <div className="mt-2">
-                                    <input type="date"
-                                    id="dueDate"
-                                    name="dueDate"
-                                    autoComplete="off"
-                                    required
-                                    value={dueDate}
-                                    onChange={((e) => {setDueDate(e.target.value)})}
-                                    className="w-full rounded border py-2 pl-2 text-gray-900 shadow ring"
+                                    <input
+                                        type="date"
+                                        id="dueDate"
+                                        name="dueDate"
+                                        autoComplete="off"
+                                        required
+                                        value={dueDate}
+                                        onChange={(e) => { setDueDate(e.target.value); }}
+                                        className="w-full rounded border py-2 pl-2 text-gray-900 shadow ring"
                                     />
                                 </div>
                             </div>
@@ -217,45 +210,49 @@ export default function TodoApp() {
                         </form>
                     </div>
                 </section>
+
                 {/* right section */}
-                <section className="p-6 md:p-12 mt-10 rounded-lg shadow-xl w-full max-w-lg bg-white ">
+                <section className="p-6 md:p-12 mt-10 rounded-lg shadow-xl w-full max-w-lg bg-white">
                     <h2 className="text-center text-2xl font-bold leading-9 text-gray-900">Todo List</h2>
 
-                    <div className="mt-6 space-y-6 ">
+                    <div className="mt-6 space-y-6">
                         {
                             todos.map((todo) => (
-                                <div key={todo.id} className="border p-4 rounded-md shadow-md ">
-                                    <h3 className="text-lg font-semibold text-gray-900 break-words ">{todo.title}</h3>
-                                        <p className="text-sm text-gray-500 ">
-                                            Due Date: {todo.dueDate}
-                                        </p>
-                                        <p className="text-gray-700 multiline break-words ">
-                                            {todo.details}
-                                        </p>
-                                        <div className="mt-4 space-x-6 ">
-                                            <button type="button" className="text-sm font-semibold text-white bg-blue-500 hover:bg-blue-700 rounded" onClick={() => handleupdateClick(todo)}>   
+                                <div key={todo.id} className="border p-4 rounded-md shadow-md">
+                                    <h3 className="text-lg font-semibold text-gray-900 break-words">{todo.title}</h3>
+                                    <p className="text-sm text-gray-500">
+                                        Due Date: {todo.dueDate}
+                                    </p>
+                                    <p className="text-gray-700 break-words">
+                                        {todo.details}
+                                    </p>
+                                    <div className="mt-4 space-x-6">
+                                        <button
+                                            type="button"
+                                            className="px-3 py-1 text-sm font-semibold text-white bg-blue-500 hover:bg-blue-700 rounded"
+                                            onClick={() => handleupdateClick(todo)}
+                                        >
                                             Update
-                                            </button>
-                                            <button type="button" onClick={async () => {
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={async () => {
                                                 const deleteTodoId = await deleteTodos(todo.id);
-                                                if(deleteTodoId){
-                                                    const updateTodos = todos.filter((t) => { t.id === deleteTodoId });
-                                                    setTodos(updateTodos);
+                                                if (deleteTodoId) {
+                                                    const updatedTodos = todos.filter((t) => t.id !== deleteTodoId);
+                                                    setTodos(updatedTodos);
                                                 }
                                             }}
-                                            className="px-3 py-1"
-                                            >
-
-                                            </button>
-                                        </div>
+                                            className="px-3 py-1 text-sm font-semibold text-white bg-red-500 hover:bg-red-700 rounded"
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
                                 </div>
                             ))
                         }
                     </div>
-
-
                 </section>
-
             </main>
         </>
     );
